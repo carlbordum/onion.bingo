@@ -7,6 +7,8 @@ import Html exposing (Html, button, div, text)
 import Html.Events exposing (onClick)
 import Random
 
+import OnionData exposing (..)
+
 
 
 -- MAIN
@@ -23,26 +25,22 @@ main =
 
 -- MODEL
 
-type Source = TheOnion | NotTheOnion
 type alias Quiz =
   { title : String
+  , url : String
   , source : Source
   }
 
-p1 = { title = "O1", source = TheOnion }
-posts = [ { title = "O2", source = TheOnion }
-        , { title = "N1", source = NotTheOnion }
-        , { title = "N2", source = NotTheOnion }
-        ]
-
+dummyPost = { title = "Loading", url = "https://onion.bingo/", source = TheOnion }
 randomQuiz : Random.Generator Quiz
-randomQuiz = Random.uniform p1 posts
+randomQuiz = Random.uniform dummyPost posts
+randomCmd = Random.generate RandomEvent randomQuiz
 
 type alias Model = { quiz : Quiz
                    , score : Int
                    }
 init : () -> (Model, Cmd Msg)
-init _ = ({quiz = p1, score = 0}, Cmd.none)
+init _ = ({quiz = dummyPost, score = 0}, randomCmd)
 
 
 
@@ -56,9 +54,9 @@ update msg model =
     Guess src ->
       case model.quiz.source == src of
         True ->
-          ({model | score = model.score + 1}, Random.generate RandomEvent randomQuiz)
+          ({model | score = model.score + 1}, randomCmd)
         False ->
-          ({model | score = 0}, Random.generate RandomEvent randomQuiz)
+          ({model | score = 0}, randomCmd)
     RandomEvent q ->
       ({model | quiz = q}, Cmd.none)
 
