@@ -38,27 +38,29 @@ posts = [ { title = "O2", source = TheOnion }
 randomQuiz : Random.Generator Quiz
 randomQuiz = Random.uniform p1 posts
 
-type alias Model = Quiz
+type alias Model = { quiz : Quiz
+                   , score : Int
+                   }
 init : () -> (Model, Cmd Msg)
-init _ = (p1, Cmd.none)
+init _ = ({quiz = p1, score = 0}, Cmd.none)
 
 
 
 -- UPDATE
 
-type Msg = GuessOnion | GuessNotOnion | RandomEvent Quiz
+type Msg = Guess Source | RandomEvent Quiz
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   case msg of
-    GuessOnion ->
-      (model, Random.generate RandomEvent randomQuiz)
-
-    GuessNotOnion ->
-      (model, Random.generate RandomEvent randomQuiz)
-
+    Guess src ->
+      case model.quiz.source == src of
+        True ->
+          ({model | score = model.score + 1}, Random.generate RandomEvent randomQuiz)
+        False ->
+          ({model | score = 0}, Random.generate RandomEvent randomQuiz)
     RandomEvent q ->
-      (q, Cmd.none)
+      ({model | quiz = q}, Cmd.none)
 
 
 
@@ -76,9 +78,10 @@ view model =
   { title = "onion.bingo"
   , body =
     [ div []
-      [ div [] [ text model.title ]
-      , button [ onClick GuessOnion ] [ text "TheOnion!" ]
-      , button [ onClick GuessNotOnion ] [ text "NotTheOnion!" ]
+      [ div [] [ text model.quiz.title ]
+      , div [] [ text (String.fromInt model.score) ]
+      , button [ onClick (Guess TheOnion) ] [ text "TheOnion!" ]
+      , button [ onClick (Guess NotTheOnion) ] [ text "NotTheOnion!" ]
       ]
       ]
   }
