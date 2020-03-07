@@ -7,6 +7,15 @@ import Html exposing (Html, button, div, text)
 import Html.Events exposing (onClick)
 import Random
 
+import Bulma.CDN exposing (..)
+import Bulma.Modifiers exposing (..)
+import Bulma.Modifiers.Typography exposing (textCentered)
+import Bulma.Form exposing (..)
+import Bulma.Elements exposing (..)
+import Bulma.Components exposing (..)
+import Bulma.Columns as Columns exposing (..)
+import Bulma.Layout exposing (..)
+
 import OnionData exposing (..)
 
 
@@ -75,11 +84,20 @@ view : Model -> Browser.Document Msg
 view model =
   { title = "onion.bingo"
   , body =
-    [ div []
-      [ div [] [ text model.quiz.title ]
-      , div [] [ text (String.fromInt model.score) ]
-      , button [ onClick (Guess TheOnion) ] [ text "TheOnion!" ]
-      , button [ onClick (Guess NotTheOnion) ] [ text "NotTheOnion!" ]
+    [ stylesheet
+    , hero { heroModifiers | color = Link, size = Large } []
+      [ heroBody []
+        [ container []
+          [ title H1 [ textCentered ] [ Html.text model.quiz.title ]
+          , fields Centered []
+            [ controlButton { buttonModifiers | color = Warning, size = Large } [ onClick (Guess TheOnion) ] [] [ Html.text "TheOnion 🧅" ]
+            , controlButton { buttonModifiers | color = Warning, size = Large } [ onClick (Guess NotTheOnion) ] [] [ Html.text "I think it's real 🤦" ]
+            ]
+          , fields Centered []
+            [ title H1 [] [ Html.text (String.fromInt model.score) ]
+            ]
+          ]
+        ]
       ]
-      ]
+    ]
   }
