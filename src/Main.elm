@@ -236,6 +236,23 @@ prevQuestion model =
                 ]
 
 
+highScoreView : Int -> Html Msg
+highScoreView hscore =
+    case hscore == 0 of
+        False ->
+            let
+                highscoreEmoji =
+                    "\u{1F947}"
+            in
+            hscore
+                |> String.fromInt
+                |> (++) highscoreEmoji
+                |> centeredTitle
+
+        True ->
+            Html.text ""
+
+
 view : Model -> Browser.Document Msg
 view model =
     { title = "onion.bingo \u{1F9C5}\u{1F926}"
@@ -254,7 +271,7 @@ view model =
                 [ model.score |> String.fromInt |> centeredTitle ]
             , fields Centered
                 []
-                [ model.highScore |> String.fromInt |> centeredTitle ]
+                [ highScoreView model.highScore ]
             , fields Centered
                 []
                 [ prevQuestion model ]
