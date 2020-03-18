@@ -24,7 +24,7 @@ main =
     Browser.document
         { init = init
         , update = update
-        , subscriptions = subscriptions
+        , subscriptions = \_ -> Sub.none
         , view = view
         }
 
@@ -54,16 +54,12 @@ init _ =
 
 
 dummyPost =
-    { title = "Loading", url = "https://onion.bingo/", source = TheOnion }
-
-
-randomQuiz : Random.Generator Quiz
-randomQuiz =
-    Random.uniform dummyPost posts
+    { title = "Loading...", url = "https://onion.bingo/", source = TheOnion }
 
 
 randomCmd =
-    Random.generate RandomEvent randomQuiz
+    Random.uniform dummyPost posts
+        |> Random.generate RandomEvent
 
 
 
@@ -97,50 +93,67 @@ update msg model =
 
 
 
--- SUBSCRIPTIONS
-
-
-subscriptions : Model -> Sub Msg
-subscriptions model =
-    Sub.none
-
-
-
--- VIEW
+{- VIEW -}
 
 
 stylesheetUrl : String
 stylesheetUrl =
-    "https://jenil.github.io/bulmaswatch/nuclear/bulmaswatch.min.css"
+    "https://jenil.github.io/bulmaswatch/darkly/bulmaswatch.min.css"
+
+
+stylesheetLink : Html msg
+stylesheetLink =
+    Html.node "link"
+        [ Html.Attributes.rel "stylesheet"
+        , Html.Attributes.href stylesheetUrl
+        ]
+        []
+
+
+centeredTitle : String -> Html Msg
+centeredTitle titleText =
+    title
+        H2
+        [ textCentered ]
+        [ Html.text titleText ]
+
+
+answerButton : Source -> String -> Html Msg
+answerButton srcGuess buttonText =
+    -- make a bulma button for answering the current quiz
+    controlButton
+        { buttonModifiers | color = Warning, size = Large }
+        [ onClick (Guess srcGuess) ]
+        []
+        [ Html.text buttonText ]
+
+
+heroContainer : List (Html Msg) -> Html Msg
+heroContainer htmls =
+    hero { heroModifiers | color = Primary, size = Large }
+        []
+        [ heroBody []
+            [ container []
+                htmls
+            ]
+        ]
 
 
 view : Model -> Browser.Document Msg
 view model =
     { title = "onion.bingo"
     , body =
-        [ Html.node "link" [ Html.Attributes.rel "stylesheet", Html.Attributes.href stylesheetUrl ] []
-        , hero { heroModifiers | color = Default, size = Large }
-            []
-            [ heroBody []
-                [ container []
-                    [ title H1 [ textCentered ] [ Html.text model.quiz.title ]
-                    , fields Centered
-                        []
-                        [ controlButton
-                            { buttonModifiers | color = Warning, size = Large }
-                            [ onClick (Guess TheOnion) ]
-                            []
-                            [ Html.text "TheOnion \u{1F9C5}" ]
-                        , controlButton { buttonModifiers | color = Warning, size = Large }
-                            [ onClick (Guess NotTheOnion) ]
-                            []
-                            [ Html.text "I think it's real \u{1F926}" ]
-                        ]
-                    , fields Centered
-                        []
-                        [ title H1 [] [ Html.text (String.fromInt model.score) ] ]
-                    ]
+        [ stylesheetLink
+        , heroContainer
+            [ centeredTitle model.quiz.title
+            , fields Centered
+                []
+                [ answerButton TheOnion "TheOnion \u{1F9C5}"
+                , answerButton NotTheOnion "I think it's real \u{1F926}"
                 ]
+            , fields Centered
+                []
+                [ model.score |> String.fromInt |> centeredTitle ]
             ]
         ]
     }
