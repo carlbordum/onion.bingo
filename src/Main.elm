@@ -43,6 +43,7 @@ type alias Quiz =
 type alias Model =
     { quiz : Quiz
     , score : Int
+    , highScore : Int
     , rulesRead : Bool
     , prevquiz : Maybe Quiz
     }
@@ -52,6 +53,7 @@ init : () -> ( Model, Cmd Msg )
 init _ =
     ( { quiz = dummyPost
       , score = 0
+      , highScore = 0
       , rulesRead = False
       , prevquiz = Nothing
       }
@@ -89,6 +91,7 @@ update msg model =
                 True ->
                     ( { model
                         | score = model.score + 1
+                        , highScore = max model.highScore (model.score + 1)
                         , prevquiz = Just model.quiz
                       }
                     , randomCmd
@@ -249,6 +252,9 @@ view model =
             , fields Centered
                 []
                 [ model.score |> String.fromInt |> centeredTitle ]
+            , fields Centered
+                []
+                [ model.highScore |> String.fromInt |> centeredTitle ]
             , fields Centered
                 []
                 [ prevQuestion model ]
