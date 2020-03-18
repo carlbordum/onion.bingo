@@ -268,7 +268,7 @@ view model =
                 ]
             , fields Centered
                 []
-                [ model.score |> String.fromInt |> centeredTitle ]
+                [ model.score |> String.fromInt |> (++) "\u{1F949}" |> centeredTitle ]
             , fields Centered
                 []
                 [ highScoreView model.highScore ]
