@@ -9,7 +9,7 @@ import Bulma.Form exposing (..)
 import Bulma.Layout exposing (..)
 import Bulma.Modifiers exposing (..)
 import Bulma.Modifiers.Typography exposing (textCentered)
-import Html exposing (Html, button, div, text)
+import Html exposing (Html, a, button, div, p, strong, text)
 import Html.Attributes exposing (href, rel)
 import Html.Events exposing (onClick)
 import OnionData exposing (..)
@@ -139,6 +139,24 @@ heroContainer htmls =
         ]
 
 
+bingoFooter =
+    footer []
+        [ container []
+            [ content Standard
+                [ textCentered ]
+                [ p []
+                    [ strong [] [ text "onion.bingo" ]
+                    , text " is "
+                    , a [ href "https://www.fsf.org/about/what-is-free-software" ] [ text "free software" ]
+                    , text ". You can "
+                    , a [ href "https://github.com/carlbordum/onion.bingo" ] [ text "read the source" ]
+                    , text ". Hope you have fun :-)"
+                    ]
+                ]
+            ]
+        ]
+
+
 view : Model -> Browser.Document Msg
 view model =
     { title = "onion.bingo \u{1F9C5}\u{1F926}"
@@ -155,5 +173,6 @@ view model =
                 []
                 [ model.score |> String.fromInt |> centeredTitle ]
             ]
+        , bingoFooter
         ]
     }
