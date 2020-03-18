@@ -210,6 +210,8 @@ answerButton srcGuess buttonText =
 
 prevQuestion : Model -> Html Msg
 prevQuestion model =
+    -- if there is a previous quiz in model, show a link to the article
+    -- the link should open in a new tab
     case model.prevquiz of
         Nothing ->
             Html.text ""
@@ -217,7 +219,9 @@ prevQuestion model =
         Just prevquiz ->
             Bulma.Elements.button
                 buttonModifiers
-                [ Html.Attributes.href prevquiz.url ]
+                [ Html.Attributes.href prevquiz.url
+                , Html.Attributes.target "_blank"
+                ]
                 [ let
                     linkEmoji =
                         "🔗"
@@ -225,7 +229,7 @@ prevQuestion model =
                     srcEmoji =
                         sourceEmoji prevquiz.source
                   in
-                  Html.text (linkEmoji ++ "   View Last Question   " ++ srcEmoji)
+                  Html.text (linkEmoji ++ "   Link to Last Question   " ++ srcEmoji)
                 ]
 
 
