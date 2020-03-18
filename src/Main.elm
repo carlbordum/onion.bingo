@@ -9,7 +9,7 @@ import Bulma.Form exposing (..)
 import Bulma.Layout exposing (..)
 import Bulma.Modifiers exposing (..)
 import Bulma.Modifiers.Typography exposing (textCentered)
-import Html exposing (Html, a, button, div, p, strong, text)
+import Html exposing (Attribute, Html, a, button, div, p, strong, text)
 import Html.Attributes exposing (href, rel)
 import Html.Events exposing (onClick)
 import OnionData exposing (..)
@@ -43,12 +43,13 @@ type alias Quiz =
 type alias Model =
     { quiz : Quiz
     , score : Int
+    , rulesRead : Bool
     }
 
 
 init : () -> ( Model, Cmd Msg )
 init _ =
-    ( { quiz = dummyPost, score = 0 }
+    ( { quiz = dummyPost, score = 0, rulesRead = False }
     , randomCmd
     )
 
@@ -69,6 +70,7 @@ randomCmd =
 type Msg
     = Guess Source
     | RandomEvent Quiz
+    | RulesRead
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -88,6 +90,11 @@ update msg model =
 
         RandomEvent q ->
             ( { model | quiz = q }
+            , Cmd.none
+            )
+
+        RulesRead ->
+            ( { model | rulesRead = True }
             , Cmd.none
             )
 
@@ -157,13 +164,34 @@ bingoFooter =
         ]
 
 
+ruleNotification rulesRead =
+    case rulesRead of
+        True ->
+            Html.text ""
+
+        False ->
+            columns columnsModifiers
+                []
+                [ column { columnModifiers | offset = Auto }
+                    []
+                    [ notificationWithDelete
+                        Info
+                        []
+                        RulesRead
+                        [ text "Welcome to onion.bingo! The game is simple: try to guess correctly as many times in row as possible. What are you guessing? Published articles. Half of them satirical."
+                        ]
+                    ]
+                ]
+
+
 view : Model -> Browser.Document Msg
 view model =
     { title = "onion.bingo \u{1F9C5}\u{1F926}"
     , body =
         [ stylesheetLink
         , heroContainer
-            [ centeredTitle model.quiz.title
+            [ ruleNotification model.rulesRead
+            , centeredTitle model.quiz.title
             , fields Centered
                 []
                 [ answerButton TheOnion "TheOnion \u{1F9C5}"
