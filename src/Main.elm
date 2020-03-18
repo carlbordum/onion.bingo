@@ -10,6 +10,7 @@ import Bulma.Layout exposing (..)
 import Bulma.Modifiers exposing (..)
 import Bulma.Modifiers.Typography exposing (textCentered)
 import Html exposing (Html, button, div, text)
+import Html.Attributes exposing (href, rel)
 import Html.Events exposing (onClick)
 import OnionData exposing (..)
 import Random
@@ -108,12 +109,17 @@ subscriptions model =
 -- VIEW
 
 
+stylesheetUrl : String
+stylesheetUrl =
+    "https://jenil.github.io/bulmaswatch/nuclear/bulmaswatch.min.css"
+
+
 view : Model -> Browser.Document Msg
 view model =
     { title = "onion.bingo"
     , body =
-        [ stylesheet
-        , hero { heroModifiers | color = Link, size = Large }
+        [ Html.node "link" [ Html.Attributes.rel "stylesheet", Html.Attributes.href stylesheetUrl ] []
+        , hero { heroModifiers | color = Default, size = Large }
             []
             [ heroBody []
                 [ container []
