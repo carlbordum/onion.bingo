@@ -8,6 +8,8 @@ https://old.reddit.com/r/TheOnion/ and https://old.reddit.com/r/nottheonion/.
 You can play the game at https://onion.bingo.pyjam.as/. ``.bingo`` is a real
 TLD and ``onion.bingo`` is available, but it is hella expensive. Enjoy!
 
+This game was pair programmed with my friend Asbjørn Olling :-)
+
 
 Contributing
 ------------
