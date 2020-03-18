@@ -237,7 +237,7 @@ prevQuestion model =
                     srcEmoji =
                         sourceEmoji prevquiz.source
                   in
-                  Html.text (linkEmoji ++ "   Link to Last Question   " ++ srcEmoji)
+                  Html.text (linkEmoji ++ "   Link to Last Article   " ++ srcEmoji)
                 ]
 
 
