@@ -141,7 +141,7 @@ heroContainer htmls =
 
 view : Model -> Browser.Document Msg
 view model =
-    { title = "onion.bingo"
+    { title = "onion.bingo \u{1F9C5}\u{1F926}"
     , body =
         [ stylesheetLink
         , heroContainer
