@@ -256,7 +256,7 @@ view model =
                 ]
             , fields Centered
                 []
-                [ model.score |> String.fromInt |> (++) "🌟" |> centeredTitle ]
+                [ model.score |> String.fromInt |> (++) "⭐" |> centeredTitle ]
             , fields Centered
                 []
                 [ model.highScore |> String.fromInt |> (++) "\u{1F947}" |> centeredTitle ]
