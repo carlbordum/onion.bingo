@@ -208,7 +208,12 @@ answerButton srcGuess buttonText =
         { buttonModifiers | color = Warning, size = Large }
         [ onClick (Guess srcGuess) ]
         []
-        [ Html.text (buttonText ++ " " ++ sourceEmoji srcGuess) ]
+        [ let
+            em =
+                sourceEmoji srcGuess
+          in
+          Html.text (em ++ " " ++ buttonText ++ " " ++ em)
+        ]
 
 
 prevQuestion : Model -> Html Msg
@@ -236,23 +241,6 @@ prevQuestion model =
                 ]
 
 
-highScoreView : Int -> Html Msg
-highScoreView hscore =
-    case hscore == 0 of
-        False ->
-            let
-                highscoreEmoji =
-                    "\u{1F947}"
-            in
-            hscore
-                |> String.fromInt
-                |> (++) highscoreEmoji
-                |> centeredTitle
-
-        True ->
-            Html.text ""
-
-
 view : Model -> Browser.Document Msg
 view model =
     { title = "onion.bingo \u{1F9C5}\u{1F926}"
@@ -268,10 +256,10 @@ view model =
                 ]
             , fields Centered
                 []
-                [ model.score |> String.fromInt |> (++) "\u{1F949}" |> centeredTitle ]
+                [ model.score |> String.fromInt |> (++) "🌟" |> centeredTitle ]
             , fields Centered
                 []
-                [ highScoreView model.highScore ]
+                [ model.highScore |> String.fromInt |> (++) "\u{1F947}" |> centeredTitle ]
             , fields Centered
                 []
                 [ prevQuestion model ]
