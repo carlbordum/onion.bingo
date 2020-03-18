@@ -44,18 +44,26 @@ type alias Model =
     { quiz : Quiz
     , score : Int
     , rulesRead : Bool
+    , prevquiz : Maybe Quiz
     }
 
 
 init : () -> ( Model, Cmd Msg )
 init _ =
-    ( { quiz = dummyPost, score = 0, rulesRead = False }
+    ( { quiz = dummyPost
+      , score = 0
+      , rulesRead = False
+      , prevquiz = Nothing
+      }
     , randomCmd
     )
 
 
 dummyPost =
-    { title = "Loading...", url = "https://onion.bingo/", source = TheOnion }
+    { title = "Loading..."
+    , url = "https://onion.bingo/"
+    , source = TheOnion
+    }
 
 
 randomCmd =
@@ -79,12 +87,18 @@ update msg model =
         Guess src ->
             case model.quiz.source == src of
                 True ->
-                    ( { model | score = model.score + 1 }
+                    ( { model
+                        | score = model.score + 1
+                        , prevquiz = Just model.quiz
+                      }
                     , randomCmd
                     )
 
                 False ->
-                    ( { model | score = 0 }
+                    ( { model
+                        | score = 0
+                        , prevquiz = Just model.quiz
+                      }
                     , randomCmd
                     )
 
@@ -123,16 +137,6 @@ centeredTitle titleText =
         H2
         [ textCentered ]
         [ Html.text titleText ]
-
-
-answerButton : Source -> String -> Html Msg
-answerButton srcGuess buttonText =
-    -- make a bulma button for answering the current quiz
-    controlButton
-        { buttonModifiers | color = Warning, size = Large }
-        [ onClick (Guess srcGuess) ]
-        []
-        [ Html.text buttonText ]
 
 
 heroContainer : List (Html Msg) -> Html Msg
@@ -184,6 +188,47 @@ ruleNotification rulesRead =
                 ]
 
 
+sourceEmoji : Source -> String
+sourceEmoji src =
+    case src of
+        TheOnion ->
+            "\u{1F9C5}"
+
+        NotTheOnion ->
+            "\u{1F926}"
+
+
+answerButton : Source -> String -> Html Msg
+answerButton srcGuess buttonText =
+    -- make a bulma button for answering the current quiz
+    controlButton
+        { buttonModifiers | color = Warning, size = Large }
+        [ onClick (Guess srcGuess) ]
+        []
+        [ Html.text (buttonText ++ " " ++ sourceEmoji srcGuess) ]
+
+
+prevQuestion : Model -> Html Msg
+prevQuestion model =
+    case model.prevquiz of
+        Nothing ->
+            Html.text ""
+
+        Just prevquiz ->
+            Bulma.Elements.button
+                buttonModifiers
+                [ Html.Attributes.href prevquiz.url ]
+                [ let
+                    linkEmoji =
+                        "🔗"
+
+                    srcEmoji =
+                        sourceEmoji prevquiz.source
+                  in
+                  Html.text (linkEmoji ++ "   View Last Question   " ++ srcEmoji)
+                ]
+
+
 view : Model -> Browser.Document Msg
 view model =
     { title = "onion.bingo \u{1F9C5}\u{1F926}"
@@ -194,12 +239,15 @@ view model =
             , centeredTitle model.quiz.title
             , fields Centered
                 []
-                [ answerButton TheOnion "TheOnion \u{1F9C5}"
-                , answerButton NotTheOnion "I think it's real \u{1F926}"
+                [ answerButton TheOnion "TheOnion"
+                , answerButton NotTheOnion "I think it's real"
                 ]
             , fields Centered
                 []
                 [ model.score |> String.fromInt |> centeredTitle ]
+            , fields Centered
+                []
+                [ prevQuestion model ]
             ]
         , bingoFooter
         ]
