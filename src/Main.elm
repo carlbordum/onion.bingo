@@ -110,7 +110,7 @@ subscriptions model =
 
 view : Model -> Browser.Document Msg
 view model =
-    { title = "onion.bingo"
+    { title = "onion.bingo \u{1F9C5}\u{1F926}"
     , body =
         [ stylesheet
         , hero { heroModifiers | color = Link, size = Large }
